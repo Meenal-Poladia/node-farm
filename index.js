@@ -29,7 +29,6 @@ const server = http.createServer((request, response) => {
     const pathName = requestURL.pathname;
     const query = requestURL.searchParams.get("id");
     // .searchParams returns this: URLSearchParams { 'id' => '1' }
-    console.log(pathName, query);
 
     //This is the overview page
     if(pathName === "/" || pathName === "/overview") {
