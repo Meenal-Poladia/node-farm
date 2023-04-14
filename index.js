@@ -2,6 +2,9 @@
 const http = require("http");
 const fs = require("fs");
 
+//A 3rd part library to add query parameters like this /id=baby-carrots
+const slugify = require("slugify");
+
 const replaceTemplate = require("./modules/replaceTemplate");
 
 const templateOverview = fs.readFileSync(`${__dirname}/templates/template-overview.html`, "utf-8");
@@ -10,6 +13,9 @@ const templateProduct = fs.readFileSync(`${__dirname}/templates/template-product
 
 const data = fs.readFileSync(`${__dirname}/dev-data/data.json`,"utf-8");
 const dataObject = JSON.parse(data);
+
+const slugs = dataObject.map(item => slugify(item.productName, { lower: true }));
+dataObject.map((item, i) => item["slug"] = slugs[i]);
 
 const server = http.createServer((request, response) => {
     const baseURL = `http://${request.headers.host}`;
@@ -29,7 +35,8 @@ const server = http.createServer((request, response) => {
     }
     //Product Page
     else if(pathName === "/product") {
-        const product = dataObject[query];
+        const productId = dataObject.findIndex(item => item.slug === query);
+        const product = dataObject[productId];
         response.writeHead(200, {
             "Content-Type": "text/html",
         })
